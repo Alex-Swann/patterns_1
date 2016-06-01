@@ -5,13 +5,14 @@ require_relative 'xml_parser'
 
 # Understands the conversion of strings to abstract types
 class Converter
-  def initialize(string)
+  def initialize(string, location)
     @string = string
+    @location = location
   end
 
   def convert(type)
     raise "Unrecognised type" unless known_parser?(type)
-    parser_of_type(type).convert  
+    parser_of_type(type).convert
   end
 
   private
@@ -25,6 +26,11 @@ class Converter
   end
 
   def parser_of_type(type)
-    PARSERS[type].new(string)
+    location_censor
+    PARSERS[type].new(string.upcase)
+  end
+
+  def location_censor
+     @string += ' ' + ('*' * @location.length)
   end
 end
